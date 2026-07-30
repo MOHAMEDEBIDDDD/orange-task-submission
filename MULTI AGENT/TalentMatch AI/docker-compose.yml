@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  talentmatch-ai:
+    build: .
+    container_name: talentmatch_ai_app
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

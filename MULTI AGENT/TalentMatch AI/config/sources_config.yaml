@@ -1,0 +1,21 @@
+sources:
+  - name: "LinkedIn"
+    domain: "linkedin.com"
+    source_class: "LinkedInSource"
+    enabled: true
+  - name: "Indeed"
+    domain: "indeed.com"
+    source_class: "IndeedSource"
+    enabled: true
+  - name: "Wuzzuf"
+    domain: "wuzzuf.net"
+    source_class: "WuzzufSource"
+    enabled: true
+  - name: "Internal Referrals"
+    domain: "internal.talentmatch.ai"
+    source_class: "InternalReferralsSource"
+    enabled: true
+  - name: "Company Careers"
+    domain: "careers.company.com"
+    source_class: "CompanyCareersSource"
+    enabled: false

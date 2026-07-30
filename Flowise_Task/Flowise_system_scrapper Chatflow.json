@@ -1,0 +1,749 @@
+{
+  "nodes": [
+    {
+      "id": "conversationalAgent_0",
+      "position": {
+        "x": 1152.3175447832618,
+        "y": 259.47860953708516
+      },
+      "type": "customNode",
+      "data": {
+        "id": "conversationalAgent_0",
+        "label": "Conversational Agent",
+        "version": 3,
+        "name": "conversationalAgent",
+        "type": "AgentExecutor",
+        "baseClasses": [
+          "AgentExecutor",
+          "BaseChain",
+          "Runnable"
+        ],
+        "category": "Agents",
+        "description": "Conversational agent for a chat model. It will utilize chat specific prompts",
+        "inputParams": [
+          {
+            "label": "System Message",
+            "name": "systemMessage",
+            "type": "string",
+            "rows": 4,
+            "default": "Assistant is a large language model trained by OpenAI.\n\nAssistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.\n\nAssistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.\n\nOverall, Assistant is a powerful system that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.",
+            "optional": true,
+            "additionalParams": true,
+            "id": "conversationalAgent_0-input-systemMessage-string",
+            "display": true
+          },
+          {
+            "label": "Max Iterations",
+            "name": "maxIterations",
+            "type": "number",
+            "optional": true,
+            "additionalParams": true,
+            "id": "conversationalAgent_0-input-maxIterations-number",
+            "display": true
+          }
+        ],
+        "inputAnchors": [
+          {
+            "label": "Allowed Tools",
+            "name": "tools",
+            "type": "Tool",
+            "list": true,
+            "id": "conversationalAgent_0-input-tools-Tool",
+            "display": true
+          },
+          {
+            "label": "Chat Model",
+            "name": "model",
+            "type": "BaseChatModel",
+            "id": "conversationalAgent_0-input-model-BaseChatModel",
+            "display": true
+          },
+          {
+            "label": "Memory",
+            "name": "memory",
+            "type": "BaseChatMemory",
+            "id": "conversationalAgent_0-input-memory-BaseChatMemory",
+            "display": true
+          },
+          {
+            "label": "Input Moderation",
+            "description": "Detect text that could generate harmful output and prevent it from being sent to the language model",
+            "name": "inputModeration",
+            "type": "Moderation",
+            "optional": true,
+            "list": true,
+            "id": "conversationalAgent_0-input-inputModeration-Moderation",
+            "display": true
+          }
+        ],
+        "inputs": {
+          "tools": [
+            "{{exaSearch_0.data.instance}}"
+          ],
+          "model": "{{chatGoogleGenerativeAI_0.data.instance}}",
+          "memory": "{{bufferMemory_0.data.instance}}",
+          "systemMessage": "Assistant is a large language model trained by OpenAI.\n\nAssistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.\n\nAssistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.\n\nOverall, Assistant is a powerful system that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.",
+          "inputModeration": "",
+          "maxIterations": ""
+        },
+        "outputAnchors": [
+          {
+            "id": "conversationalAgent_0-output-conversationalAgent-AgentExecutor|BaseChain|Runnable",
+            "name": "conversationalAgent",
+            "label": "AgentExecutor",
+            "description": "Conversational agent for a chat model. It will utilize chat specific prompts",
+            "type": "AgentExecutor | BaseChain | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 440,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1152.3175447832618,
+        "y": 259.47860953708516
+      },
+      "dragging": false
+    },
+    {
+      "id": "chatGoogleGenerativeAI_0",
+      "position": {
+        "x": 85.71666387546037,
+        "y": 78.73599838624071
+      },
+      "type": "customNode",
+      "data": {
+        "id": "chatGoogleGenerativeAI_0",
+        "label": "Google Gemini",
+        "version": 3.1,
+        "name": "chatGoogleGenerativeAI",
+        "type": "ChatGoogleGenerativeAI",
+        "baseClasses": [
+          "ChatGoogleGenerativeAI",
+          "ChatGoogleGenerativeAI",
+          "BaseChatModel",
+          "BaseLanguageModel",
+          "Runnable"
+        ],
+        "category": "Chat Models",
+        "description": "Wrapper around Google Gemini large language models that use the Chat endpoint",
+        "inputParams": [
+          {
+            "label": "Connect Credential",
+            "name": "credential",
+            "type": "credential",
+            "credentialNames": [
+              "googleGenerativeAI"
+            ],
+            "optional": false,
+            "description": "Google Generative AI credential.",
+            "id": "chatGoogleGenerativeAI_0-input-credential-credential",
+            "display": true
+          },
+          {
+            "label": "Model Name",
+            "name": "modelName",
+            "type": "asyncOptions",
+            "loadMethod": "listModels",
+            "default": "gemini-1.5-flash-latest",
+            "id": "chatGoogleGenerativeAI_0-input-modelName-asyncOptions",
+            "display": true
+          },
+          {
+            "label": "Custom Model Name",
+            "name": "customModelName",
+            "type": "string",
+            "placeholder": "gemini-1.5-pro-exp-0801",
+            "description": "Custom model name to use. If provided, it will override the model selected",
+            "additionalParams": true,
+            "optional": true,
+            "id": "chatGoogleGenerativeAI_0-input-customModelName-string",
+            "display": true
+          },
+          {
+            "label": "Temperature",
+            "name": "temperature",
+            "type": "number",
+            "step": 0.1,
+            "default": 0.9,
+            "optional": true,
+            "id": "chatGoogleGenerativeAI_0-input-temperature-number",
+            "display": true
+          },
+          {
+            "label": "Streaming",
+            "name": "streaming",
+            "type": "boolean",
+            "default": true,
+            "optional": true,
+            "additionalParams": true,
+            "id": "chatGoogleGenerativeAI_0-input-streaming-boolean",
+            "display": true
+          },
+          {
+            "label": "Allow Image Uploads",
+            "name": "allowImageUploads",
+            "type": "boolean",
+            "description": "Allow image input. Refer to the <a href=\"https://docs.flowiseai.com/using-flowise/uploads#image\" target=\"_blank\">docs</a> for more details.",
+            "default": false,
+            "optional": true,
+            "id": "chatGoogleGenerativeAI_0-input-allowImageUploads-boolean",
+            "display": true
+          },
+          {
+            "label": "Thinking Budget",
+            "name": "thinkingBudget",
+            "type": "number",
+            "description": "Guides the number of thinking tokens. -1 for dynamic, 0 to disable, or positive integer (Gemini 2.5 models).",
+            "step": 1,
+            "optional": true,
+            "additionalParams": true,
+            "show": {
+              "modelName": [
+                "gemini-2.5-pro",
+                "gemini-2.5-flash",
+                "gemini-2.5-flash-lite"
+              ]
+            },
+            "id": "chatGoogleGenerativeAI_0-input-thinkingBudget-number",
+            "display": false
+          },
+          {
+            "label": "Thinking Level",
+            "name": "thinkingLevel",
+            "type": "options",
+            "description": "Adjust the amount of reasoning effort based on the complexity of the user request",
+            "options": [
+              {
+                "label": "Low",
+                "name": "LOW"
+              },
+              {
+                "label": "Medium",
+                "name": "MEDIUM"
+              },
+              {
+                "label": "High",
+                "name": "HIGH"
+              }
+            ],
+            "optional": true,
+            "additionalParams": true,
+            "show": {
+              "modelName": [
+                "gemini-3.1-pro-preview",
+                "gemini-3.1-flash-lite-preview",
+                "gemini-3-flash-preview"
+              ]
+            },
+            "id": "chatGoogleGenerativeAI_0-input-thinkingLevel-options",
+            "display": true
+          },
+          {
+            "label": "Max Output Tokens",
+            "name": "maxOutputTokens",
+            "type": "number",
+            "step": 1,
+            "optional": true,
+            "additionalParams": true,
+            "id": "chatGoogleGenerativeAI_0-input-maxOutputTokens-number",
+            "display": true
+          },
+          {
+            "label": "Top Probability",
+            "name": "topP",
+            "type": "number",
+            "step": 0.1,
+            "optional": true,
+            "additionalParams": true,
+            "id": "chatGoogleGenerativeAI_0-input-topP-number",
+            "display": true
+          },
+          {
+            "label": "Top Next Highest Probability Tokens",
+            "name": "topK",
+            "type": "number",
+            "description": "Decode using top-k sampling: consider the set of top_k most probable tokens. Must be positive",
+            "step": 1,
+            "optional": true,
+            "additionalParams": true,
+            "id": "chatGoogleGenerativeAI_0-input-topK-number",
+            "display": true
+          },
+          {
+            "label": "Safety Settings",
+            "name": "safetySettings",
+            "type": "array",
+            "description": "Safety settings for the model. Refer to the <a href=\"https://ai.google.dev/gemini-api/docs/safety-settings\">official guide</a> on how to use Safety Settings",
+            "array": [
+              {
+                "label": "Harm Category",
+                "name": "harmCategory",
+                "type": "options",
+                "options": [
+                  {
+                    "label": "Dangerous",
+                    "name": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                    "description": "Promotes, facilitates, or encourages harmful acts."
+                  },
+                  {
+                    "label": "Harassment",
+                    "name": "HARM_CATEGORY_HARASSMENT",
+                    "description": "Negative or harmful comments targeting identity and/or protected attributes."
+                  },
+                  {
+                    "label": "Hate Speech",
+                    "name": "HARM_CATEGORY_HATE_SPEECH",
+                    "description": "Content that is rude, disrespectful, or profane."
+                  },
+                  {
+                    "label": "Sexually Explicit",
+                    "name": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                    "description": "Contains references to sexual acts or other lewd content."
+                  },
+                  {
+                    "label": "Civic Integrity",
+                    "name": "HARM_CATEGORY_CIVIC_INTEGRITY",
+                    "description": "Election-related queries."
+                  }
+                ]
+              },
+              {
+                "label": "Harm Block Threshold",
+                "name": "harmBlockThreshold",
+                "type": "options",
+                "options": [
+                  {
+                    "label": "None",
+                    "name": "BLOCK_NONE",
+                    "description": "Always show regardless of probability of unsafe content"
+                  },
+                  {
+                    "label": "Only High",
+                    "name": "BLOCK_ONLY_HIGH",
+                    "description": "Block when high probability of unsafe content"
+                  },
+                  {
+                    "label": "Medium and Above",
+                    "name": "BLOCK_MEDIUM_AND_ABOVE",
+                    "description": "Block when medium or high probability of unsafe content"
+                  },
+                  {
+                    "label": "Low and Above",
+                    "name": "BLOCK_LOW_AND_ABOVE",
+                    "description": "Block when low, medium or high probability of unsafe content"
+                  },
+                  {
+                    "label": "Threshold Unspecified (Default Threshold)",
+                    "name": "HARM_BLOCK_THRESHOLD_UNSPECIFIED",
+                    "description": "Threshold is unspecified, block using default threshold"
+                  }
+                ]
+              }
+            ],
+            "optional": true,
+            "additionalParams": true,
+            "id": "chatGoogleGenerativeAI_0-input-safetySettings-array",
+            "display": true
+          },
+          {
+            "label": "Base URL",
+            "name": "baseUrl",
+            "type": "string",
+            "description": "Base URL for the API. Leave empty to use the default.",
+            "optional": true,
+            "additionalParams": true,
+            "id": "chatGoogleGenerativeAI_0-input-baseUrl-string",
+            "display": true
+          }
+        ],
+        "inputAnchors": [
+          {
+            "label": "Cache",
+            "name": "cache",
+            "type": "BaseCache",
+            "optional": true,
+            "id": "chatGoogleGenerativeAI_0-input-cache-BaseCache",
+            "display": true
+          }
+        ],
+        "inputs": {
+          "cache": "",
+          "modelName": "gemini-3.1-flash-lite-preview",
+          "customModelName": "",
+          "temperature": "0.3",
+          "streaming": true,
+          "allowImageUploads": "",
+          "thinkingBudget": "",
+          "thinkingLevel": "",
+          "maxOutputTokens": "",
+          "topP": "",
+          "topK": "",
+          "safetySettings": "",
+          "baseUrl": ""
+        },
+        "outputAnchors": [
+          {
+            "id": "chatGoogleGenerativeAI_0-output-chatGoogleGenerativeAI-ChatGoogleGenerativeAI|ChatGoogleGenerativeAI|BaseChatModel|BaseLanguageModel|Runnable",
+            "name": "chatGoogleGenerativeAI",
+            "label": "ChatGoogleGenerativeAI",
+            "description": "Wrapper around Google Gemini large language models that use the Chat endpoint",
+            "type": "ChatGoogleGenerativeAI | ChatGoogleGenerativeAI | BaseChatModel | BaseLanguageModel | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 675,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 85.71666387546037,
+        "y": 78.73599838624071
+      },
+      "dragging": false
+    },
+    {
+      "id": "bufferMemory_0",
+      "position": {
+        "x": 542.2444402043429,
+        "y": 837.4359063112969
+      },
+      "type": "customNode",
+      "data": {
+        "id": "bufferMemory_0",
+        "label": "Buffer Memory",
+        "version": 2,
+        "name": "bufferMemory",
+        "type": "BufferMemory",
+        "baseClasses": [
+          "BufferMemory",
+          "BaseChatMemory",
+          "BaseMemory"
+        ],
+        "category": "Memory",
+        "description": "Retrieve chat messages stored in database",
+        "inputParams": [
+          {
+            "label": "Session Id",
+            "name": "sessionId",
+            "type": "string",
+            "description": "If not specified, a random id will be used. Learn <a target=\"_blank\" href=\"https://docs.flowiseai.com/memory#ui-and-embedded-chat\">more</a>",
+            "default": "",
+            "additionalParams": true,
+            "optional": true,
+            "id": "bufferMemory_0-input-sessionId-string",
+            "display": true
+          },
+          {
+            "label": "Memory Key",
+            "name": "memoryKey",
+            "type": "string",
+            "default": "chat_history",
+            "additionalParams": true,
+            "id": "bufferMemory_0-input-memoryKey-string",
+            "display": true
+          }
+        ],
+        "inputAnchors": [],
+        "inputs": {
+          "sessionId": "",
+          "memoryKey": "chat_history"
+        },
+        "outputAnchors": [
+          {
+            "id": "bufferMemory_0-output-bufferMemory-BufferMemory|BaseChatMemory|BaseMemory",
+            "name": "bufferMemory",
+            "label": "BufferMemory",
+            "description": "Retrieve chat messages stored in database",
+            "type": "BufferMemory | BaseChatMemory | BaseMemory"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 257,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 542.2444402043429,
+        "y": 837.4359063112969
+      },
+      "dragging": false
+    },
+    {
+      "id": "exaSearch_0",
+      "position": {
+        "x": 570.9503296788555,
+        "y": -7.52704153065455
+      },
+      "type": "customNode",
+      "data": {
+        "id": "exaSearch_0",
+        "label": "Exa Search",
+        "version": 1.1,
+        "name": "exaSearch",
+        "type": "ExaSearch",
+        "baseClasses": [
+          "ExaSearch",
+          "Tool",
+          "StructuredTool",
+          "Runnable"
+        ],
+        "category": "Tools",
+        "description": "Wrapper around Exa Search API - search engine fully designed for use by LLMs",
+        "inputParams": [
+          {
+            "label": "Connect Credential",
+            "name": "credential",
+            "type": "credential",
+            "credentialNames": [
+              "exaSearchApi"
+            ],
+            "id": "exaSearch_0-input-credential-credential",
+            "display": true
+          },
+          {
+            "label": "Tool Description",
+            "name": "description",
+            "type": "string",
+            "description": "Description of what the tool does. This is for LLM to determine when to use this tool.",
+            "rows": 4,
+            "additionalParams": true,
+            "default": "A wrapper around Exa Search. Input should be an Exa-optimized query. Output is a JSON array of the query results",
+            "id": "exaSearch_0-input-description-string",
+            "display": true
+          },
+          {
+            "label": "Num of Results",
+            "name": "numResults",
+            "type": "number",
+            "optional": true,
+            "step": 1,
+            "additionalParams": true,
+            "description": "Number of search results to return. Default 10. Max 10 for basic plans. Up to thousands for custom plans.",
+            "id": "exaSearch_0-input-numResults-number",
+            "display": true
+          },
+          {
+            "label": "Search Type",
+            "name": "type",
+            "type": "options",
+            "options": [
+              {
+                "label": "keyword",
+                "name": "keyword"
+              },
+              {
+                "label": "neural",
+                "name": "neural"
+              },
+              {
+                "label": "auto",
+                "name": "auto",
+                "description": "decides between keyword and neural"
+              }
+            ],
+            "optional": true,
+            "additionalParams": true,
+            "id": "exaSearch_0-input-type-options",
+            "display": true
+          },
+          {
+            "label": "Use Auto Prompt",
+            "name": "useAutoprompt",
+            "type": "boolean",
+            "optional": true,
+            "additionalParams": true,
+            "description": "If true, your query will be converted to a Exa query. Default false.",
+            "id": "exaSearch_0-input-useAutoprompt-boolean",
+            "display": true
+          },
+          {
+            "label": "Category (Beta)",
+            "name": "category",
+            "type": "options",
+            "description": "A data category to focus on, with higher comprehensivity and data cleanliness. Categories right now include company, research paper, news, github, tweet, movie, song, personal site, and pdf",
+            "options": [
+              {
+                "label": "company",
+                "name": "company"
+              },
+              {
+                "label": "research paper",
+                "name": "research paper"
+              },
+              {
+                "label": "news",
+                "name": "news"
+              },
+              {
+                "label": "github",
+                "name": "github"
+              },
+              {
+                "label": "tweet",
+                "name": "tweet"
+              },
+              {
+                "label": "movie",
+                "name": "movie"
+              },
+              {
+                "label": "song",
+                "name": "song"
+              },
+              {
+                "label": "pdf",
+                "name": "pdf"
+              },
+              {
+                "label": "personal site",
+                "name": "personal site"
+              },
+              {
+                "label": "linkedin profile",
+                "name": "linkedin profile"
+              },
+              {
+                "label": "financial report",
+                "name": "financial report"
+              }
+            ],
+            "optional": true,
+            "additionalParams": true,
+            "id": "exaSearch_0-input-category-options",
+            "display": true
+          },
+          {
+            "label": "Include Domains",
+            "name": "includeDomains",
+            "type": "string",
+            "rows": 4,
+            "optional": true,
+            "additionalParams": true,
+            "description": "List of domains to include in the search, separated by comma. If specified, results will only come from these domains.",
+            "id": "exaSearch_0-input-includeDomains-string",
+            "display": true
+          },
+          {
+            "label": "Exclude Domains",
+            "name": "excludeDomains",
+            "type": "string",
+            "rows": 4,
+            "optional": true,
+            "additionalParams": true,
+            "description": "List of domains to exclude in the search, separated by comma. If specified, results will not include any from these domains.",
+            "id": "exaSearch_0-input-excludeDomains-string",
+            "display": true
+          },
+          {
+            "label": "Start Crawl Date",
+            "name": "startCrawlDate",
+            "type": "string",
+            "optional": true,
+            "additionalParams": true,
+            "placeholder": "2023-01-01T00:00:00.000Z",
+            "description": "Crawl date refers to the date that Exa discovered a link. Results will include links that were crawled after this date. Must be specified in ISO 8601 format.",
+            "id": "exaSearch_0-input-startCrawlDate-string",
+            "display": true
+          },
+          {
+            "label": "End Crawl Date",
+            "name": "endCrawlDate",
+            "type": "string",
+            "optional": true,
+            "additionalParams": true,
+            "placeholder": "2023-12-31T00:00:00.000Z",
+            "description": "Crawl date refers to the date that Exa discovered a link. Results will include links that were crawled before this date. Must be specified in ISO 8601 format.",
+            "id": "exaSearch_0-input-endCrawlDate-string",
+            "display": true
+          },
+          {
+            "label": "Start Published Date",
+            "name": "startPublishedDate",
+            "type": "string",
+            "optional": true,
+            "additionalParams": true,
+            "placeholder": "2023-01-01T00:00:00.000Z",
+            "description": "Only links with a published date after this will be returned. Must be specified in ISO 8601 format.",
+            "id": "exaSearch_0-input-startPublishedDate-string",
+            "display": true
+          },
+          {
+            "label": "End Published Date",
+            "name": "endPublishedDate",
+            "type": "string",
+            "optional": true,
+            "additionalParams": true,
+            "placeholder": "2023-12-31T00:00:00.000Z",
+            "description": "Only links with a published date before this will be returned. Must be specified in ISO 8601 format.",
+            "id": "exaSearch_0-input-endPublishedDate-string",
+            "display": true
+          }
+        ],
+        "inputAnchors": [],
+        "inputs": {
+          "description": "A wrapper around Exa Search. Input should be an Exa-optimized query. Output is a JSON array of the query results",
+          "numResults": "",
+          "type": "",
+          "useAutoprompt": "",
+          "category": "",
+          "includeDomains": "",
+          "excludeDomains": "",
+          "startCrawlDate": "",
+          "endCrawlDate": "",
+          "startPublishedDate": "",
+          "endPublishedDate": ""
+        },
+        "outputAnchors": [
+          {
+            "id": "exaSearch_0-output-exaSearch-ExaSearch|Tool|StructuredTool|Runnable",
+            "name": "exaSearch",
+            "label": "ExaSearch",
+            "description": "Wrapper around Exa Search API - search engine fully designed for use by LLMs",
+            "type": "ExaSearch | Tool | StructuredTool | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 333,
+      "selected": false,
+      "dragging": false,
+      "positionAbsolute": {
+        "x": 570.9503296788555,
+        "y": -7.52704153065455
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "chatGoogleGenerativeAI_0",
+      "sourceHandle": "chatGoogleGenerativeAI_0-output-chatGoogleGenerativeAI-ChatGoogleGenerativeAI|ChatGoogleGenerativeAI|BaseChatModel|BaseLanguageModel|Runnable",
+      "target": "conversationalAgent_0",
+      "targetHandle": "conversationalAgent_0-input-model-BaseChatModel",
+      "type": "buttonedge",
+      "id": "chatGoogleGenerativeAI_0-chatGoogleGenerativeAI_0-output-chatGoogleGenerativeAI-ChatGoogleGenerativeAI|ChatGoogleGenerativeAI|BaseChatModel|BaseLanguageModel|Runnable-conversationalAgent_0-conversationalAgent_0-input-model-BaseChatModel"
+    },
+    {
+      "source": "bufferMemory_0",
+      "sourceHandle": "bufferMemory_0-output-bufferMemory-BufferMemory|BaseChatMemory|BaseMemory",
+      "target": "conversationalAgent_0",
+      "targetHandle": "conversationalAgent_0-input-memory-BaseChatMemory",
+      "type": "buttonedge",
+      "id": "bufferMemory_0-bufferMemory_0-output-bufferMemory-BufferMemory|BaseChatMemory|BaseMemory-conversationalAgent_0-conversationalAgent_0-input-memory-BaseChatMemory"
+    },
+    {
+      "source": "exaSearch_0",
+      "sourceHandle": "exaSearch_0-output-exaSearch-ExaSearch|Tool|StructuredTool|Runnable",
+      "target": "conversationalAgent_0",
+      "targetHandle": "conversationalAgent_0-input-tools-Tool",
+      "type": "buttonedge",
+      "id": "exaSearch_0-exaSearch_0-output-exaSearch-ExaSearch|Tool|StructuredTool|Runnable-conversationalAgent_0-conversationalAgent_0-input-tools-Tool"
+    }
+  ]
+}

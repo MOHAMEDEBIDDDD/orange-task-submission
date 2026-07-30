@@ -1,0 +1,188 @@
+{
+  "name": "N8N_TELEGRAM_BOT",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "80d68d63-266a-44d2-8556-54b52f734326",
+      "name": "Telegram Trigger",
+      "webhookId": "b22a2564-2721-48a9-b593-eb5fffa2b6c8",
+      "credentials": {
+        "telegramApi": {
+          "id": "vyOWBs1iKb6sbVIF",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "\nYou answer the question, then write your answer to the connected Google Sheet using the tool. in the apropriat row and column \n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        704,
+        16
+      ],
+      "id": "cabf2021-f20c-469d-a741-a6d6d6ab0c4e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        576,
+        224
+      ],
+      "id": "7f0774c0-e2c7-4866-8f65-5fd1da761db7",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "14AV-aJYlu3GAyKWB0LQPaSHkurn4W249mJa1NPHrI48",
+          "mode": "list",
+          "cachedResultName": "Untitled spreadsheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14AV-aJYlu3GAyKWB0LQPaSHkurn4W249mJa1NPHrI48/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14AV-aJYlu3GAyKWB0LQPaSHkurn4W249mJa1NPHrI48/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ask": "={{ $('Telegram Trigger').item.json.message.text }}",
+            "answer": "={{ $json.output }}"
+          },
+          "matchingColumns": [
+            "ask"
+          ],
+          "schema": [
+            {
+              "id": "ask",
+              "displayName": "ask",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "answer",
+              "displayName": "answer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        16
+      ],
+      "id": "8ba176dc-40ae-4b62-8d06-c9d4031f7a0a",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "lZJLkGrPcRuoVLWK",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "4fc24b0c-c46b-46db-83c3-1f78ec6ddecf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "de682aacf43de04b3fdd6499b462d35985b29013d3c93018964de999c4ef5723"
+  },
+  "nodeGroups": [],
+  "id": "olbRv0A4YWWuDNyg",
+  "tags": []
+}

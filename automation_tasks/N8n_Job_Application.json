@@ -1,0 +1,487 @@
+{
+  "name": "Job Application Copilot",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are scoring and tailoring a job application for the candidate below.\n\nTHRESHOLD: {{ $('Load Config1').first().json.threshold }}\n\nDo the following:\n1. Score 0-100 how well the candidate fits this job, and give a one-sentence reason.\n2. Only if the score is >= THRESHOLD, also write:\n   - cover_letter: a concise, tailored cover letter (max 200 words)\n   - bullets: 3-5 tailored resume bullet points mapping the candidate's real experience to this job\n   If the score is below THRESHOLD, set cover_letter to \"\" and bullets to [].\n\n=== CANDIDATE CV ===\n{{ $('Load Config1').first().json.cvText }}\n\n=== JOB ===\nTitle: {{ $json.title }}\nCompany: {{ $json.company }}\nLocation: {{ $json.location }}\nDescription: {{ $json.description }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a precise job-application copilot. Base every judgement strictly on the CV and job description provided — never invent experience the candidate does not have. Return only the requested structured fields: score, reason, cover_letter, bullets."
+        }
+      },
+      "id": "92813b60-50cf-4803-954e-ef98ce1b3c57",
+      "name": "Score & Tailor Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2736,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-6",
+          "cachedResultName": "Claude Sonnet 4.6"
+        },
+        "options": {
+          "maxTokensToSample": 1200
+        }
+      },
+      "id": "7f87d519-fd7f-48cc-9ad2-add4cec3d7ba",
+      "name": "Anthropic Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.5,
+      "position": [
+        2656,
+        1200
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"score\": 0,\n  \"reason\": \"\",\n  \"cover_letter\": \"\",\n  \"bullets\": [\"\"]\n}"
+      },
+      "id": "89c70bed-bb58-4be7-9481-f59e461ad49e",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2880,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const a = $json.output || {};\nconst j = $('Deduplicate Jobs1').item.json;\nconst bullets = Array.isArray(a.bullets) ? a.bullets : [];\nreturn { json: {\n  date: new Date().toISOString().slice(0, 10),\n  source: j.source || '',\n  title: j.title || '',\n  company: j.company || '',\n  location: j.location || '',\n  url: j.url || '',\n  score: Number(a.score) || 0,\n  reason: a.reason || '',\n  cover_letter: a.cover_letter || '',\n  cv_bullets: bullets.map((b, i) => (i + 1) + '. ' + b).join('\\n'),\n  status: 'To review'\n}};"
+      },
+      "id": "5347fb71-6541-4289-ab4f-f19b27e6645a",
+      "name": "Format Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3008,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "f13200af-21ee-492b-9ee1-cf9e45bce013",
+      "name": "Daily 08:00 Trigger1",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        1376,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cv",
+              "name": "cvText",
+              "value": "Mohamed Rabie +20 128 344 7448 | Mohamedrabie2004@gmail.com mohamed-rabie-6ab525230 6th of October City, Egypt PROFESSIONAL PROFILE Computer, Communication and Autonomous Systems Engineer currently working as a Network Engineer at Nokia, with expertise spanning AI, machine learning, networking, and cybersecurity. Proven track record in spatial-temporal data analysis, reinforcement learning, and building intelligent systems. Passionate about robotics, autonomous systems, and solving real-world problems using scalable technologies. PERSONAL DETAILS Languages: Arabic (Native), English (Proficient) EDUCATION • NewGizaUniversity (NGU)– in collaboration with University College London (UCL) BSc in Computer, Communication and Autonomous Systems Engineering Graduated July 2025 GPA: 3.23/4.0 ◦ Artificial Intelligence (AI), Machine Learning (ML), Deep Learning (DL), Cloud Computing, Embedded Systems, and Intelligent Systems ◦ Focus areas: Robotics, Computer Vision, Big Data Analytics, and Cybersecurity ◦ Graduation Project Grade: A+ • British School of Egypt (BSE) IGCSE Certification ◦ International General Certificate of Secondary Education PROFESSIONAL EXPERIENCE 2021 Egypt • Nokia IP / Automation Engineer Oct 2025– Present Egypt ◦ Designed and presented an agentic AI Presales module as part of a Nokia hackathon, integrating Digital Twin data from NSP APIs to automate network upgrade validation and design. ◦ Built a LangGraph-orchestrated agent performing multi-step reasoning over live network state, with a hybrid two-model architecture: a cloud LLM for natural-language-to-SQL translation and a locally hosted DeepSeek R1 for confidential hardware catalog analysis, ensuring sensitive data never leaves Nokia infrastructure. ◦ Enabled multi-mode interaction including manual hardware definition, agent-driven hardware recommendation (e.g., SFPs based on distance, cards based on capacity), and guided network transformation scenarios. ◦ Automated Bill of Materials (BoM) generation by identifying gaps between existing and target network configurations, reducing reliance on manual Product Pricing Principles (PPP) file processing. ◦ Delivered an end-to-end demo showcasing real-time network analysis, hardware validation, and autonomous decision-making for presales use cases. ◦ Built and validated Nokia SR OS lab topologies (MD-CLI) covering LAG, OSPF with MD5 authentication, MPLS/LDP, MP-BGPwith route reflectors, and Epipe, VPLS and VPRN services. ◦ Technologies: Python, LangChain, LangGraph, FastAPI, SQLite, Ollama (DeepSeek R1), LangSmith, Groq API • Valeo Egypt Summer Intern– Embedded Systems ◦ Contributed to embedded systems testing and data logging for automotive applications Jul– Aug 2024 Egypt ◦ Gained hands-on experience with debugging, version control, and hardware communication protocols ◦ Worked in production environments with automotive-grade embedded systems ◦ Applied knowledge of real-time systems and hardware-software integration • Huawei Egypt Engineering Intern ◦ Gained exposure to telecommunications infrastructure and networking technologies ◦ Worked on projects related to communication systems and network optimization ◦ Collaborated with engineering teams on technical solutions and implementations • Orange Egypt Technical Intern ◦ Participated in telecommunications and mobile network projects ◦ Learned about network protocols and mobile communication systems Jul– Sep 2023 Egypt Aug 2022 Egypt ◦ Contributed to technical documentation and system analysis CERTIFICATIONS • Nokia Certified Network Routing Specialist II (NRS II) 4A0-113 (OSPF), 4A0-103 (MPLS), 4A0-104 (Services), 4A0-114 (BGP) • Nokia Certified Network Routing Specialist I (NRS I) 4A0-100 (IP Networks and Services Fundamentals) KEY PROJECTS 2026 Nokia 2025 Nokia • AI-Powered Emotionally Intelligent Robotic Head Lead Developer– Graduation Project (Grade: A+) 2024- 2025 ◦ Designed and assembled a humanoid robotic head for elderly care, powered by Raspberry Pi and servo motors ◦ Built comprehensive voice assistant system from scratch using object-oriented Python with class-based architecture ◦ Implemented real-time speech-to-text using Whisper API, GPT-4-based response generation, and synchronized TTS playback ◦ Developed emotion detection module using DeepFace integrated with prosody-based emotion analysis via pyAudioAnalysis ◦ Created user-friendly GUI tailored for elderly interaction, featuring large buttons and simplified layout ◦ Integrated audio, video, and emotion modules into cohesive pipeline for emotionally adaptive dialogue ◦ Technologies: Python, DeepFace, pyAudioAnalysis, Whisper API, GPT-4 API, TTS, Raspberry Pi, Servo Motors, Tkinter • Disaster Tweet Classification System Machine Learning Engineer– Kaggle Competition ◦ Developed NLP model using DistilBERT for real-time disaster tweet detection and classification ◦ Implemented comprehensive text preprocessing pipeline with regex pattern matching and data cleaning ◦ Fine-tuned transformer model achieving high accuracy on binary classification task ◦ Created confusion matrix visualization and performance metrics analysis ◦ Built interactive prediction interface for manual tweet classification with real-time inference ◦ Technologies: Python, PyTorch, Transformers (Hugging Face), DistilBERT, Scikit-learn, Regex, Matplotlib • Wildfire Data Analysis & Visualization System Lead Analyst for Spatial & Temporal Analysis ◦ Analyzed wildfire intensity patterns across 1K, 10K, and 100K datasets using Apache Spark SQL ◦ Performed comprehensive spatial analysis computing total fire intensity per county (2016-2017) ◦ Conducted temporal analysis of wildfire patterns in Riverside County, California ◦ Generated choropleth maps and shapefiles using QGIS for spatial visualization ◦ Identified key findings: summer fire intensity peaks and geographic hotspots ◦ Technologies: Apache Spark, SQL, Python, QGIS, Parquet format, Geospatial analysis TECHNICAL SKILLS • Programming Languages:Python, C++, C, MATLAB, Bash • Development Tools:VS Code, Git, Ubuntu, Windows, Conda, Jupyter Notebooks • Machine Learning & AI:PyTorch, TensorFlow, Transformers (Hugging Face), OpenCV, Scikit-learn • DeepLearning:Linear/Logistic Regression, SVM, Decision Trees, Random Forests, CNNs, RNNs • Computer Vision:OpenCV, Image Classification, Object Detection, DeepFace, GANs • Natural Language Processing:DistilBERT, Text Classification, Tokenization, Sentiment Analysis • Reinforcement Learning:Deep Q-Networks (DQN), Proximal Policy Optimization (PPO), Actor-Critic Methods • Big Data &Analytics:Apache Spark, PySpark, HDFS, Pandas, NumPy, Large-scale data processing • Cloud&Infrastructure:Docker, Kubernetes, AWS (introductory), Flask APIs, Edge computing • IoT&Embedded:MQTT,Raspberry Pi, Edge AI deployment, Servo Motors • Geospatial & Visualization:QGIS, Shapefile generation, Choropleth mapping, Matplotlib, Seaborn • Networking:Nokia SR OS (MD-CLI), MPLS, BGP, OSPF, L2/L3 VPNs, Network Automation • Cybersecurity:MITM Attacks, Packet Sniffing, ARP Spoofing, Network Analysis",
+              "type": "string"
+            },
+            {
+              "id": "th",
+              "name": "threshold",
+              "value": 70,
+              "type": "number"
+            },
+            {
+              "id": "co",
+              "name": "adzunaCountry",
+              "value": "nl",
+              "type": "string"
+            },
+            {
+              "id": "kw",
+              "name": "keywords",
+              "value": "AI Engineer",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d7b8c35f-12ac-4260-9a93-b9f384c29d2f",
+      "name": "Load Config1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1600,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.adzuna.com/v1/api/jobs/{{ $json.adzunaCountry }}/search/1",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "app_id",
+              "value": "YOUR_ADZUNA_APP_ID"
+            },
+            {
+              "name": "app_key",
+              "value": "YOUR_ADZUNA_APP_KEY"
+            },
+            {
+              "name": "results_per_page",
+              "value": "50"
+            },
+            {
+              "name": "what",
+              "value": "={{ $json.keywords }}"
+            },
+            {
+              "name": "max_days_old",
+              "value": "14"
+            },
+            {
+              "name": "sort_by",
+              "value": "date"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "82c95b06-9517-481e-b987-b454d9c6af38",
+      "name": "Fetch Adzuna Jobs1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1824,
+        864
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = ($input.first().json.results) || [];\nreturn results.map(r => ({ json: {\n  source: 'Adzuna',\n  title: r.title || '',\n  company: (r.company && r.company.display_name) || '',\n  location: (r.location && r.location.display_name) || '',\n  url: r.redirect_url || '',\n  description: String(r.description || '').slice(0, 2000)\n}}));"
+      },
+      "id": "16988310-5c21-40c8-869e-83be5253e7bf",
+      "name": "Normalize Adzuna1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2048,
+        864
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "9e5dafd8-6f5a-4c90-a819-93ef8f02a9aa",
+      "name": "Merge Job Sources1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2256,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://remoteok.com/api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (compatible; n8n-job-copilot)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "325f4469-4907-4bf7-bcf4-d39d8d3bdfd5",
+      "name": "Fetch RemoteOK Jobs1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1824,
+        1104
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "let entries = $input.all().map(i => i.json);\nif (entries.length === 1 && Array.isArray(entries[0])) entries = entries[0];\nreturn entries\n  .filter(e => e && e.position && e.url)\n  .map(e => ({ json: {\n    source: 'RemoteOK',\n    title: e.position,\n    company: e.company || '',\n    location: e.location || 'Remote',\n    url: e.url,\n    description: String(e.description || '').replace(/<[^>]+>/g, ' ').slice(0, 2000),\n    tags: e.tags || []\n  }}))\n  .filter(o => /ai|ml|machine learning|data|llm|agent/i.test(o.json.title + ' ' + (o.json.tags || []).join(' ')))\n  .map(o => { delete o.json.tags; return o; });"
+      },
+      "id": "ec82bc9b-5b5b-469a-a2c4-969eb0c8cab8",
+      "name": "Normalize RemoteOK1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2048,
+        1104
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst seen = new Set(staticData.seenUrls || []);\nconst out = [];\nfor (const it of $input.all()) {\n  const u = it.json.url;\n  if (u && !seen.has(u)) { seen.add(u); out.push(it); }\n}\nstaticData.seenUrls = Array.from(seen).slice(-5000);\nreturn out;"
+      },
+      "id": "f5ad6db1-e4d8-4a2f-99e2-a83b5299ef2f",
+      "name": "Deduplicate Jobs1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2480,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.score }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              },
+              "rightValue": "={{ $('Load Config1').first().json.threshold }}"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "0975a0d0-4dec-4954-b29e-b49456218f91",
+      "name": "Score >= Threshold1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3248,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "PASTE_YOUR_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "faee4262-17fe-4c0a-bc50-e63fed51698d",
+      "name": "Append To Tracker1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3488,
+        976
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "lZJLkGrPcRuoVLWK",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Score & Tailor Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Score & Tailor Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score & Tailor Agent": {
+      "main": [
+        [
+          {
+            "node": "Format Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Row": {
+      "main": [
+        [
+          {
+            "node": "Score >= Threshold1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily 08:00 Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Load Config1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Config1": {
+      "main": [
+        [
+          {
+            "node": "Fetch Adzuna Jobs1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch RemoteOK Jobs1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Adzuna Jobs1": {
+      "main": [
+        [
+          {
+            "node": "Normalize Adzuna1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Adzuna1": {
+      "main": [
+        [
+          {
+            "node": "Merge Job Sources1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Job Sources1": {
+      "main": [
+        [
+          {
+            "node": "Deduplicate Jobs1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch RemoteOK Jobs1": {
+      "main": [
+        [
+          {
+            "node": "Normalize RemoteOK1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize RemoteOK1": {
+      "main": [
+        [
+          {
+            "node": "Merge Job Sources1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Deduplicate Jobs1": {
+      "main": [
+        [
+          {
+            "node": "Score & Tailor Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score >= Threshold1": {
+      "main": [
+        [
+          {
+            "node": "Append To Tracker1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "30e171f4-6017-45e6-9f36-100b1f2d65bb",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "de682aacf43de04b3fdd6499b462d35985b29013d3c93018964de999c4ef5723"
+  },
+  "nodeGroups": [],
+  "id": "pqvvh4p9khgDiI6u",
+  "tags": []
+}

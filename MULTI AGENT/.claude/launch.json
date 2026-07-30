@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "talentmatch-ai",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "streamlit", "run", "TalentMatch AI/frontend/app.py", "--server.headless", "true"],
+      "port": 8501
+    }
+  ]
+}
